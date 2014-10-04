@@ -1,0 +1,13 @@
+Makefile
+Makefile.in
+aclocal.m4
+autom4te.cache/
+build-aux/
+build/
+configure
+m4/
+*.o
+*.so
+*.a
+*.la
+*.log
