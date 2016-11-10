@@ -6,8 +6,14 @@ build-aux/
 build/
 configure
 m4/
+config.status
+libtool
+libvivhook.pc
+.deps
+.libs
 *.o
 *.so
 *.a
 *.la
 *.log
+*.lo
