@@ -425,6 +425,9 @@ void the_hook(const char *filename)
         return;
     }
     printf("Hook succeeded!\n"); 
+
+    uint32_t version_marker[5] = {0x424f4c42, gcvVERSION_MAJOR, gcvVERSION_MINOR, gcvVERSION_PATCH, gcvVERSION_BUILD};
+    viv_hook_log_marker((void*)version_marker, sizeof(version_marker));
 }
 
 void viv_hook_log_marker(const char *data, size_t size)
