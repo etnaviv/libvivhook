@@ -12,7 +12,7 @@
 #include <unistd.h>
 #include <errno.h>
 //rename standard types for convenience
-#ifdef __x86_64
+#if __x86_64 || __aarch64__
     #define Elf_Ehdr Elf64_Ehdr
     #define Elf_Shdr Elf64_Shdr
     #define Elf_Sym Elf64_Sym

@@ -50,6 +50,7 @@
 #include <string.h>
 #include <sys/ioctl.h>
 #include <pthread.h>
+#include <assert.h>
 
 #define VIV_TO_PTR(x,y) ((y)((intptr_t)(x)))
 
@@ -179,6 +180,10 @@ static void log_interface_in(flightrec_event_t evctx, gcsHAL_INTERFACE *id)
     switch(id->command)
     {
     case gcvHAL_COMMIT:
+#ifdef GCABI_MULTI_COMMIT
+        assert(id->u.Commit.count == 1);
+        id->u.Commit.commandBuffer = id->u.Commit.commandBuffers[0]; /* HACK until dumper can handle multi-commit */
+#endif
         cmdbuf = VIV_TO_PTR(id->u.Commit.commandBuffer, struct _gcoCMDBUF *);
         fdr_event_add_oneshot_range(evctx, cmdbuf, sizeof(struct _gcoCMDBUF));
         fdr_event_add_oneshot_range(evctx, VIV_TO_PTR(cmdbuf->logical,uint8_t*) + cmdbuf->startOffset, cmdbuf->offset - cmdbuf->startOffset);
@@ -221,7 +226,7 @@ static void log_interface_in(flightrec_event_t evctx, gcsHAL_INTERFACE *id)
         {
             if(mappings[idx].node == VIV_TO_PTR(id->u.UnlockVideoMemory.node, void*))
             {
-                printf("remove_range %p %08x\n", mappings[idx].logical, mappings[idx].bytes);
+                printf("remove_range %p %08x\n", mappings[idx].logical, (unsigned)mappings[idx].bytes);
                 fdr_remove_monitored_range(_fdr, mappings[idx].logical, mappings[idx].bytes);
                 mappings[idx].logical = 0;
                 break;
@@ -261,7 +266,7 @@ static void log_interface_out(flightrec_event_t evctx, gcsHAL_INTERFACE *id)
             if(mappings[idx].node == VIV_TO_PTR(id->u.LockVideoMemory.node, void*))
             {
                 mappings[idx].logical = VIV_TO_PTR(id->u.LockVideoMemory.memory, void*);
-                printf("add_range %p %08x\n", mappings[idx].logical, mappings[idx].bytes);
+                printf("add_range %p %08x\n", mappings[idx].logical, (unsigned)mappings[idx].bytes);
                 //fdr_add_monitored_range(_fdr, mappings[idx].logical, mappings[idx].bytes);
                 break;
             }
@@ -286,6 +291,7 @@ static void override_interface_out(gcsHAL_INTERFACE *id, struct viv_hook_overrid
         if (o->override_chip_revision) {
             id->u.QueryChipIdentity.chipRevision = o->chip_revision;
         }
+#ifndef GCABI_HAS_NO_FEATURES
         id->u.QueryChipIdentity.chipFeatures &= ~o->features_clear[0];
         id->u.QueryChipIdentity.chipFeatures |= o->features_set[0];
         id->u.QueryChipIdentity.chipMinorFeatures &= ~o->features_clear[1];
@@ -311,6 +317,7 @@ static void override_interface_out(gcsHAL_INTERFACE *id, struct viv_hook_overrid
 #ifdef GCABI_HAS_MINOR_FEATURES_6
         id->u.QueryChipIdentity.chipMinorFeatures6 &= ~o->features_clear[7];
         id->u.QueryChipIdentity.chipMinorFeatures6 |= o->features_set[7];
+#endif
 #endif
 #ifdef GCABI_HAS_CHIPFLAGS
         id->u.QueryChipIdentity.chipFlags &= ~o->chip_flags_clear;

@@ -43,7 +43,8 @@
 #include <vector>
 #include <string>
 
-const uint32_t FDR_MAGIC = 0x8e1aaa8f;
+const uint32_t FDR_MAGIC32 = 0x8e1aaa8f;
+const uint32_t FDR_MAGIC64 = 0x8e1aaa90;
 const uint32_t FDR_VERSION = 1;
 
 typedef enum {
@@ -226,7 +227,7 @@ public:
             pthread_mutex_destroy(&mutex);
             return;
         }
-        if(write(fd, &FDR_MAGIC, sizeof(FDR_MAGIC)) < 0 ||
+        if(write(fd, (sizeof(void*)==8) ? &FDR_MAGIC64 : &FDR_MAGIC32, sizeof(FDR_MAGIC32)) < 0 ||
            write(fd, &FDR_VERSION, sizeof(FDR_VERSION)) < 0)
         {
             pthread_mutex_destroy(&mutex);
