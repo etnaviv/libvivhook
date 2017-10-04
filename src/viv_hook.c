@@ -54,6 +54,9 @@
 
 #define VIV_TO_PTR(x,y) ((y)((intptr_t)(x)))
 
+/* Maximum memory size to track */
+#define MAX_RANGE_SIZE (64*1024)
+
 flightrec_t _fdr;
 
 static int _galcore_handle = 0;
@@ -266,8 +269,12 @@ static void log_interface_out(flightrec_event_t evctx, gcsHAL_INTERFACE *id)
             if(mappings[idx].node == VIV_TO_PTR(id->u.LockVideoMemory.node, void*))
             {
                 mappings[idx].logical = VIV_TO_PTR(id->u.LockVideoMemory.memory, void*);
-                printf("add_range %p %08x\n", mappings[idx].logical, (unsigned)mappings[idx].bytes);
-                //fdr_add_monitored_range(_fdr, mappings[idx].logical, mappings[idx].bytes);
+                if (mappings[idx].bytes <= MAX_RANGE_SIZE) {
+                    printf("add_range %p %08x\n", mappings[idx].logical, (unsigned)mappings[idx].bytes);
+                    fdr_add_monitored_range(_fdr, mappings[idx].logical, mappings[idx].bytes);
+                } else {
+                    printf("not adding range %p %08x (exceeds our MAX_RANGE_SIZE)\n", VIV_TO_PTR(id->u.LockVideoMemory.memory, void*), (unsigned)mappings[idx].bytes);
+                }
                 break;
             }
         }
