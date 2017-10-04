@@ -11,6 +11,12 @@ struct viv_hook_overrides {
     uint32_t chip_model;
     bool override_chip_revision;
     uint32_t chip_revision;
+    bool override_chip_productid;
+    uint32_t chip_productid;
+    bool override_chip_ecoid;
+    uint32_t chip_ecoid;
+    bool override_chip_customerid;
+    uint32_t chip_customerid;
     uint32_t features_clear[VIV_NUM_FEATURE_WORDS];
     uint32_t features_set[VIV_NUM_FEATURE_WORDS];
     uint32_t chip_flags_clear;

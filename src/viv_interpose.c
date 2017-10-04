@@ -48,6 +48,21 @@ static void parse_environment(struct viv_hook_overrides *overrides)
         overrides->chip_revision = strtoul(value, 0, 0);
         printf("Overriding chip revision to 0x%x\n", overrides->chip_revision);
     }
+    if ((value = getenv("ETNAVIV_CHIP_PRODUCTID")) != NULL) {
+        overrides->override_chip_productid = true;
+        overrides->chip_productid = strtoul(value, 0, 0);
+        printf("Overriding chip productID to 0x%x\n", overrides->chip_productid);
+    }
+    if ((value = getenv("ETNAVIV_CHIP_ECOID")) != NULL) {
+        overrides->override_chip_ecoid = true;
+        overrides->chip_ecoid = strtoul(value, 0, 0);
+        printf("Overriding chip ecoID to 0x%x\n", overrides->chip_ecoid);
+    }
+    if ((value = getenv("ETNAVIV_CHIP_CUSTOMERID")) != NULL) {
+        overrides->override_chip_customerid = true;
+        overrides->chip_customerid = strtoul(value, 0, 0);
+        printf("Overriding chip customerID to 0x%x\n", overrides->chip_customerid);
+    }
     for (int x=0; x<VIV_NUM_FEATURE_WORDS; ++x) {
         snprintf(envkey, sizeof(envkey), "ETNAVIV_FEATURES%d_SET", x);
         if ((value = getenv(envkey)) != NULL) {

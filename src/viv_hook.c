@@ -291,7 +291,22 @@ static void override_interface_out(gcsHAL_INTERFACE *id, struct viv_hook_overrid
         if (o->override_chip_revision) {
             id->u.QueryChipIdentity.chipRevision = o->chip_revision;
         }
-#ifndef GCABI_HAS_NO_FEATURES
+#ifdef GCABI_HAS_PRODUCTID
+        if (o->override_chip_productid) {
+            id->u.QueryChipIdentity.productID = o->chip_productid;
+        }
+#endif
+#ifdef GCABI_HAS_ECOID
+        if (o->override_chip_ecoid) {
+            id->u.QueryChipIdentity.ecoID = o->chip_ecoid;
+        }
+#endif
+#ifdef GCABI_HAS_CUSTOMERID
+        if (o->override_chip_customerid) {
+            id->u.QueryChipIdentity.customerID = o->chip_customerid;
+        }
+#endif
+#ifndef GCABI_HAS_NO_FEATURE_BITS
         id->u.QueryChipIdentity.chipFeatures &= ~o->features_clear[0];
         id->u.QueryChipIdentity.chipFeatures |= o->features_set[0];
         id->u.QueryChipIdentity.chipMinorFeatures &= ~o->features_clear[1];
