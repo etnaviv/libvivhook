@@ -410,6 +410,11 @@ void hook_start_logging(const char *filename)
     }
 }
 
+void viv_hook_set_galcore_fd(int fd)
+{
+    _galcore_handle = fd;
+}
+
 void the_hook(const char *filename)
 {
     char *mali_path = NULL; // path to libMali.so
