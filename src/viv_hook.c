@@ -172,6 +172,20 @@ int my_munmap(void *addr, size_t length)
     return ret;
 }
 
+static void log_interface_in(flightrec_event_t evctx, gcsHAL_INTERFACE *id);
+
+static void log_queue(flightrec_event_t evctx, uint64_t queue_handle)
+{
+    /* log entire event chain */
+    struct _gcsQUEUE *queue = VIV_TO_PTR(queue_handle, struct _gcsQUEUE *);
+    while(queue != NULL)
+    {
+        fdr_event_add_oneshot_range(evctx, queue, sizeof(struct _gcsQUEUE));
+        log_interface_in(evctx, &queue->iface);
+        queue = VIV_TO_PTR(queue->next, struct _gcsQUEUE *);
+    }
+}
+
 /* Log contents of HAL_INTERFACE (input) child pointers.
  * Assumes that the parent structure id was already added. */
 static void log_interface_in(flightrec_event_t evctx, gcsHAL_INTERFACE *id)
@@ -200,16 +214,11 @@ static void log_interface_in(flightrec_event_t evctx, gcsHAL_INTERFACE *id)
                 fdr_event_add_oneshot_range(evctx, context->buffer, id->u.Commit.contextBuffer->bufferSize);
         }
 #endif
+        log_queue(evctx, id->u.Commit.queue);
         break;
-    case gcvHAL_EVENT_COMMIT: { /* log entire event chain */
-            struct _gcsQUEUE *queue = VIV_TO_PTR(id->u.Event.queue, struct _gcsQUEUE *);
-            while(queue != NULL)
-            {
-                fdr_event_add_oneshot_range(evctx, queue, sizeof(struct _gcsQUEUE));
-                log_interface_in(evctx, &queue->iface);
-                queue = VIV_TO_PTR(queue->next, struct _gcsQUEUE *);
-            }
-        }
+    case gcvHAL_EVENT_COMMIT:
+        log_queue(evctx, id->u.Event.queue);
+        break;
 #ifndef GCABI_NO_FREE_VIDEO_MEMORY
     case gcvHAL_FREE_VIDEO_MEMORY:
         for(int idx=0; idx<MAX_MAPPINGS; ++idx)
