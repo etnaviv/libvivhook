@@ -364,7 +364,7 @@ int my_ioctl(int d, int request, void *ptr_)
 {
     vivante_ioctl_data_t *ptr = (vivante_ioctl_data_t*) ptr_;
     /* UGH, this handle gets passed in some other way instead of open() for i.mx6 blobster */
-    if(d != _galcore_handle)
+    if(_fdr != NULL && request == IOCTL_GCHAL_INTERFACE && d != _galcore_handle)
     {
         printf("warning: ioctl %08x on non-galcore_handle %i\n", request, d);
     }
