@@ -19,7 +19,7 @@ AM_CFLAGS = $(filter-out -Wnested-externs -Wcast-qual -Wredundant-decls \
 # Utility library
 libvivhook_la_LTLIBRARIES = libvivhook.la viv_interpose.la
 libvivhook_ladir = $(libdir)
-libvivhook_la_LDFLAGS = -version-info 1:0:0 -no-undefined 
+libvivhook_la_LDFLAGS = -version-info 1:0:0 -no-undefined -ldl
 libvivhook_la_LIBADD = $(GALCORE_LIBS)
 libvivhook_la_SOURCES = \
 			elf_hook.c \
