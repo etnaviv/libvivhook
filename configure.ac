@@ -50,6 +50,9 @@ AC_CHECK_HEADERS([gc_hal_driver.h gc_hal_kernel_buffer.h],
                  [],
                  [AC_MSG_ERROR([required libGAL header file missing])],
                  [#include <gc_hal.h>])
+AC_CHECK_HEADERS([gc_abi.h],
+                 [],
+                 [AC_MSG_ERROR([required galcore_headers file missing])])
 CPPFLAGS="$saved_CPPFLAGS"
 
 AC_SUBST([GALCORE_CFLAGS])
