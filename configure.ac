@@ -50,7 +50,17 @@ AC_CHECK_HEADERS([gc_hal_driver.h gc_hal_kernel_buffer.h],
                  [],
                  [AC_MSG_ERROR([required libGAL header file missing])],
                  [#include <gc_hal.h>])
+AC_CHECK_HEADERS([gc_abi.h],
+                 [],
+                 [AC_MSG_ERROR([required galcore_headers file missing])])
 CPPFLAGS="$saved_CPPFLAGS"
+
+saved_LDFLAGS="$LDFLAGS"
+LDFLAGS="$LDFLAGS $GALCORE_LIBS"
+AC_CHECK_LIB([GAL],[gco3D_WriteBuffer],
+             [],
+             [AC_MSG_ERROR([required libGAL missing])])
+LDFLAGS="$saved_LDFLAGS"
 
 AC_SUBST([GALCORE_CFLAGS])
 AC_SUBST([GALCORE_LIBS])
