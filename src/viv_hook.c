@@ -428,7 +428,7 @@ void the_hook(const char *filename)
 {
     char *mali_path = NULL; // path to libMali.so
     void *mali_base = NULL;
-    char *gal_names[] = {"libGAL.so", "libGAL-fb.so", 0};
+    char *gal_names[] = {"libGAL.so", "libGAL-fb.so", "libGAL-wl.so", NULL};
 
     hook_start_logging(filename);
 
